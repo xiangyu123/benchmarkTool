@@ -10,6 +10,8 @@ import yaml
 import json
 
 
+lockvar = threading.Lock()
+
 working_threads = 8
 hits_per_thread = 20
 division = 10
@@ -47,7 +49,6 @@ query = {
 
 def hit_es(threadNum, times):
     # connect to our cluster
-    time_outs = 0
     es = Elasticsearch([{'host': host_es, 'port': 9200}],
                        send_get_body_as='POST')
     for i in range(hits_per_thread):
@@ -64,8 +65,11 @@ def hit_es(threadNum, times):
                     request_timeout=timeout_value)
             except Exception, e:
                 print "Connection time-out occured. Consider a bigger time-out limit"
-                time_outs = time_outs + 1
                 continue
+#				if lockvar.acquire(1):
+#                    time_outs = time_outs + 1
+#                    lockvar.release()
+#                    continue
             break
 
         # print finish_time
@@ -92,6 +96,8 @@ class myThread (threading.Thread):
 
 times = []
 threads = []
+
+time_outs = 0
 
 overall_start_time = time.time()
 
@@ -123,7 +129,7 @@ throughPut = no_queries / overall_time
 
 
 print "Overall time: " + str(overall_time)
-print "ThroughPut : " + str(no_queries / overall_time) + "(servedQueries/sec)"
+print "ThroughPut : " + str(throughPut) + "(servedQueries/sec)"
 
 
 print "\n\nFinished with querries with the below statistics:"

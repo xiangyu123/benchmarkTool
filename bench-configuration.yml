@@ -7,8 +7,8 @@ general:
 # conf for read module
 read_module:
  # specify the rate to achived. How many threads to work and how many hits for each of them
- number_of_threads: 200
- hits_per_thread: 20
+ number_of_threads: 1000
+ hits_per_thread: 50
  # set a division number to report process while the benchmark is being executed
  division_report: 10
  # set it to specify how much msecs to wait for an es response

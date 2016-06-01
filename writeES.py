@@ -78,7 +78,7 @@ def hit_es(threadNum, times):
             res_txt = "OK" if not res['errors'] else "FAILED"
 
             #print (res_txt)
-            finish_time = (time.time() - start_time)
+            #finish_time = (time.time() - start_time)
             # print finish_time
             if res:
                 real_time = res['took']
