@@ -70,9 +70,9 @@ def hit_es(threadNum, times):
 
         # print finish_time
         real_time = result['took']
-        print real_time
+        #print real_time
         times.append(real_time)
-        print result['hits']['total']
+        #print result['hits']['total']
         print "Thread " + str(threadNum) + " finished... \n\n\n"
 
 
