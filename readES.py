@@ -4,11 +4,10 @@ import time
 import datetime
 from elasticsearch import Elasticsearch
 import numpy
-#import thread
+# import thread
 import threading
 import yaml
 import json
-
 
 lockvar = threading.Lock()
 
@@ -20,7 +19,6 @@ report_time = hits_per_thread / division
 
 host_es = "192.168.5.235"
 index_name = "test_data"
-batch_size = 500
 timeout_value = 1000000000
 
 with open('bench-configuration.yml', 'r') as f:
@@ -66,22 +64,21 @@ def hit_es(threadNum, times):
             except Exception, e:
                 print "Connection time-out occured. Consider a bigger time-out limit"
                 continue
-#				if lockvar.acquire(1):
-#                    time_outs = time_outs + 1
-#                    lockvar.release()
-#                    continue
+                # if lockvar.acquire(1):
+                #                    time_outs = time_outs + 1
+                #                    lockvar.release()
+                #                    continue
             break
 
         # print finish_time
         real_time = result['took']
-        #print real_time
+        # print real_time
         times.append(real_time)
-        #print result['hits']['total']
+        # print result['hits']['total']
         print "Thread " + str(threadNum) + " finished... \n\n\n"
 
 
-class myThread (threading.Thread):
-
+class myThread(threading.Thread):
     def __init__(self, threadID, name, timeList):
         threading.Thread.__init__(self)
         self.threadID = threadID
@@ -112,33 +109,28 @@ for thread_id in range(working_threads):
     # Add thread to thread list
     threads.append(newThread)
 
-
 # Wait for all threads to complete
 for t in threads:
     t.join()
 
-
 print "Exiting Main Thread..."
 print "My list has length: " + str(len(times))
-
 
 # Calculate statistics
 overall_time = time.time() - overall_start_time
 no_queries = hits_per_thread * working_threads
 throughPut = no_queries / overall_time
 
-
 print "Overall time: " + str(overall_time)
-print "ThroughPut : " + str(throughPut) + "(servedQueries/sec)"
-
+print "ThroughPut : " + str(no_queries / overall_time) + "(servedQueries/sec)"
 
 print "\n\nFinished with querries with the below statistics:"
 
 avg_time = numpy.mean(times)
 
-#put_settings(*args, **kwargs)
+# put_settings(*args, **kwargs)
 
-es = Elasticsearch([{'host': host_es, 'port': 9200, }])
+es = Elasticsearch([{'host': host_es, 'port': 9200,}])
 health = es.cluster.health(index=index_name)
 data_nodes = health['number_of_data_nodes']
 active_primary_shards = health['active_primary_shards']
@@ -148,7 +140,6 @@ print "Cluster:" + health['cluster_name']
 print "Status:" + health['status']
 print "Number of data nodes:" + str(data_nodes)
 print "Number of active_primary_shards:" + str(active_primary_shards)
-
 
 line_to_write = str(data_nodes) + " " + str(avg_time)
 # write the results into the final file so as to plot them.
